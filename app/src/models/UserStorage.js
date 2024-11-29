@@ -1,29 +1,26 @@
 "use strict";
 
-const fs = require("fs").promises;
+const db = require("../config/db");
 
 class UserStorage {
-  static #users = {
-    id: ["test1234"],
-    psword: ["test1234"],
-    name: ["user"],
-  };
-
-  static getUsers(...fields) {
-    const users = this.#users;
+  static #getUsers(DB, fields) {
+    const users = JSON.parse(DB);
     const newUsers = fields.reduce((newUsers, field) => {
       if (users.hasOwnProperty(field)) {
         newUsers[field] = users[field];
       }
-
       return newUsers;
     }, {});
     return newUsers;
   }
 
-  static async getUserInfo(id) {
-    const DB = await fs.readFile("./src/databases/users.json");
-    return this.#getUserInfo(DB, id);
+  static async getUsers(...fields) {
+    const DB = await fs.readFile(DBUrl);
+    return this.#getUsers(DB, fields);
+  }
+
+  static async getAllUsers() {
+    return await this.getUsers("id", "psword", "name");
   }
 
   static #getUserInfo(DB, id) {
@@ -37,9 +34,24 @@ class UserStorage {
     return userInfo;
   }
 
-  static save(userInfo) {
-    const users = this.#users;
-    return { success: true };
+  static async getUserInfo(id) {
+    return new Promise((resolve, reject) => {
+      const query = "SELECT * FROM users where id = ?";
+      db.query(query, [id], (err, data) => {
+        if (err) reject(err);
+        resolve(data[0]);
+      });
+    });
+  }
+
+  static async save(userInfo) {
+    return new Promise((resolve, reject) => {
+      const query = "INSERT INTO users(id, name, psword) VALUES(?, ?, ?)";
+      db.query(query, [userInfo.id, userInfo.name, userInfo.psword], (err) => {
+        if (err) reject(err);
+        resolve({ success: true });
+      });
+    });
   }
 }
 

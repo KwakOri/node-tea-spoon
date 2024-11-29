@@ -12,6 +12,12 @@ function register() {
     return alert("비밀번호가 일치하지 않습니다");
   }
 
+  const req = {
+    name: name.value,
+    id: id.value,
+    psword: psword.value,
+  };
+
   fetch("/register", {
     method: "POST",
     headers: {
