@@ -24,7 +24,8 @@ const process = {
   login: async (req, res) => {
     const user = new User(req.body);
     const response = await user.login();
-    if (response.err) {
+    console.log(response);
+    if (response?.err) {
       logger.error(
         `POST /login 200 Response : "success: ${response.success}, msg: ${response.err}"`
       );

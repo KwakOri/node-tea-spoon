@@ -23,34 +23,31 @@ class UserStorage {
     return await this.getUsers("id", "psword", "name");
   }
 
-  static #getUserInfo(DB, id) {
-    const users = JSON.parse(DB);
-    const idx = users.id.indexOf(id);
-    const userInfo = Object.keys(users).reduce((newUser, info) => {
-      newUser[info] = users[info][idx];
-      return newUser;
-    }, {});
-
-    return userInfo;
-  }
-
   static async getUserInfo(id) {
-    return new Promise((resolve, reject) => {
-      const query = "SELECT * FROM users where id = ?";
-      db.query(query, [id], (err, data) => {
-        if (err) reject(err);
-        else resolve(data[0]);
-      });
+    return new Promise(async (resolve, reject) => {
+      const query = "SELECT * FROM users where id = $1";
+      try {
+        const { rows } = await db.query(query, [id]);
+        resolve(rows[0]);
+      } catch (err) {
+        reject(err);
+      }
     });
   }
 
   static async save(userInfo) {
-    return new Promise((resolve, reject) => {
-      const query = "INSERT INTO users(id, name, psword) VALUES(?, ?, ?)";
-      db.query(query, [userInfo.id, userInfo.name, userInfo.psword], (err) => {
-        if (err) reject(err);
-        else resolve({ success: true });
-      });
+    return new Promise(async (resolve, reject) => {
+      const query = "INSERT INTO users(id, name, psword) VALUES($1, $2, $3)";
+      try {
+        const res = await db.query(query, [
+          userInfo.id,
+          userInfo.name,
+          userInfo.psword,
+        ]);
+        resolve({ success: true });
+      } catch (err) {
+        reject(err);
+      }
     });
   }
 }
