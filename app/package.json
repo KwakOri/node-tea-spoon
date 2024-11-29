@@ -6,7 +6,8 @@
     "ejs": "^3.1.10",
     "express": "^4.21.1",
     "morgan": "^1.10.0",
-    "mysql": "^2.18.1"
+    "mysql": "^2.18.1",
+    "winston": "^3.17.0"
   },
   "name": "tea-spoon",
   "version": "1.0.0",
