@@ -13,7 +13,7 @@
   "version": "1.0.0",
   "main": "app.js",
   "bin": {
-    "tea-spon": "bin/www.js"
+    "tea-spoon": "bin/www.js"
   },
   "scripts": {
     "nodemon": "nodemon ./bin/www.js",
